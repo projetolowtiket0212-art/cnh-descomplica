@@ -171,6 +171,22 @@ const Index = () => {
               </div>
             </div>
 
+            {/* SAVE LINK SECTION */}
+            <div className="save-link-section">
+              <div className="save-link-icon">🔗</div>
+              <div className="save-link-title">Salve seu acesso!</div>
+              <div className="save-link-sub">Guarde este link para não perder seu conteúdo</div>
+              <div className="save-link-url">
+                <div className="save-link-url-text">{APP_URL}</div>
+                <button className="save-link-copy-btn" onClick={copyAccess}>{copyLabel}</button>
+              </div>
+              <div className="save-options">
+                <a className="save-opt" href={`https://wa.me/?text=Meu%20guia%20CNH%20sem%20autoescola:%20${APP_URL}`} target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
+                <a className="save-opt" href={`mailto:?subject=Meu%20Guia%20CNH&body=Acesse%20aqui:%20${APP_URL}`} target="_blank" rel="noopener noreferrer">✉️ E-mail</a>
+                <button className="save-opt" onClick={copyAccess}>📸 Copiar link</button>
+              </div>
+            </div>
+
             {/* Overall progress */}
             <div className="px-4 py-4 bg-white border-b border-[hsl(var(--border))]">
               <div className="flex justify-between items-center mb-2">
@@ -232,21 +248,6 @@ const Index = () => {
               })}
             </div>
 
-            {/* SAVE LINK SECTION */}
-            <div className="save-link-section">
-              <div className="save-link-title">🔗 Salve seu acesso agora!</div>
-              <div className="save-link-sub">Guarde este link para não perder o acesso ao seu conteúdo.</div>
-              <div className="save-link-url">
-                <div className="save-link-url-text">{APP_URL}</div>
-                <button className="save-link-copy-btn" onClick={copyAccess}>{copyLabel}</button>
-              </div>
-              <div className="save-options">
-                <a className="save-opt" href={`https://wa.me/?text=Meu%20guia%20CNH%20sem%20autoescola:%20${APP_URL}`} target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
-                <a className="save-opt" href={`mailto:?subject=Meu%20Guia%20CNH&body=Acesse%20aqui:%20${APP_URL}`} target="_blank" rel="noopener noreferrer">✉️ E-mail</a>
-                <button className="save-opt" onClick={copyAccess}>📸 Copiar link</button>
-              </div>
-            </div>
-
             {/* UPSELL SECTION */}
             <div className="upsell-section">
               <div className="upsell-header">
@@ -258,7 +259,7 @@ const Index = () => {
               {/* Featured banner */}
               <div className="upsell-banner" onClick={() => window.open('https://pay.kirvano.com/19d7d01f-7042-4446-9681-7798e1a77636', '_blank')}>
                 <div className="banner-img-wrap">
-                  <img src="/images/simulado-banner.png" alt="Simulado CNH" />
+                  <img src="/images/psicotecnico.png" alt="Simulado CNH" />
                   <div className="banner-badge">⭐ Mais vendido</div>
                   <div className="banner-lock">🔒</div>
                 </div>
@@ -276,7 +277,7 @@ const Index = () => {
               <div className="upsell-grid">
                 <div className="upsell-card" onClick={() => window.open('https://pay.kirvano.com/67bd6f59-d0c1-44bb-8f37-db013530f916', '_blank')}>
                   <div className="upsell-card-img">
-                    <img src="/images/medo-transito.png" alt="Perco Medo do Trânsito" />
+                    <img src="/images/simulado-banner.png" alt="Perco Medo do Trânsito" />
                     <div className="upsell-card-lock">🔒</div>
                   </div>
                   <div className="upsell-card-body">
@@ -291,7 +292,7 @@ const Index = () => {
 
                 <div className="upsell-card" onClick={() => window.open('https://pay.kirvano.com/29aa4f6e-1757-4803-8050-788a6d17d66d', '_blank')}>
                   <div className="upsell-card-img">
-                    <img src="/images/medo-prova.png" alt="Perco Medo da Prova Prática" />
+                    <img src="/images/medo-transito.png" alt="Perco Medo da Prova Prática" />
                     <div className="upsell-card-lock">🔒</div>
                   </div>
                   <div className="upsell-card-body">
@@ -306,7 +307,7 @@ const Index = () => {
 
                 <div className="upsell-card" onClick={() => window.open('https://pay.kirvano.com/ccb13c57-4995-4faf-a4ea-c1c1e8e5ee33', '_blank')}>
                   <div className="upsell-card-img">
-                    <img src="/images/psicotecnico.png" alt="Passe no Psicotécnico" />
+                    <img src="/images/medo-prova.png" alt="Passe no Psicotécnico" />
                     <div className="upsell-card-lock">🔒</div>
                   </div>
                   <div className="upsell-card-body">
