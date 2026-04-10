@@ -1,41 +1,32 @@
 
-## CNH Sem Autoescola — Guia Completo (React App)
 
-### Overview
-Faithful recreation of the mobile-first Brazilian driver's license guide as a React app with progress tracking, module/step navigation, and localStorage persistence.
+## Add Save-Link, Upsell Sections, and Toast Notifications
 
-### Screens & Features
+The user wants to add marketing/upsell sections and toast notifications to the app without changing existing content, design, or logic.
 
-**1. Home Screen**
-- Green gradient hero with welcome message and progress summary
-- Overall progress bar with percentage and fire emoji
-- List of 5 module cards with icons, descriptions, time estimates, progress bars, and lock/done states
+### What will be added
 
-**2. Module Screen**
-- Back navigation with module title and step counter
-- Step progress dots (done/active/pending)
-- Rich step content: info boxes (green/yellow/red/blue), numbered how-to lists, link boxes with copy buttons, checklists, mock screens, price tables, warning banners
-- Bottom navigation with Previous/Next/Finish buttons
+1. **Save Link Section** - A green gradient card below the module list on the home screen with the app URL, copy button, and share options (WhatsApp, Email)
+2. **Upsell Section** - A "Complete sua jornada" section with:
+   - Featured banner: "Simulado CNH até Passar 2026" with payment link
+   - 3 smaller upsell cards (Medo do Trânsito, Prova Prática, Psicotécnico) with payment links
+3. **Toast Notifications** - Rotating promotional toasts that appear every 30-60 seconds after initial 20s delay, linking to payment pages
+4. **Module Upsell Strip CSS** - Styles for a contextual upsell strip (CSS only, HTML placement TBD)
+5. **Uploaded images** - Copy the 4 uploaded images to use as banner/card images in the upsell section
 
-**3. Congrats Screen**
-- Celebration animation when all modules are completed
-- Option to go back and review modules
+### Technical approach
 
-### Content Modules (all from the HTML)
-1. **Conta Gov.br** — Creating account, leveling to Prata (3 steps)
-2. **App CNH do Brasil** — Download, RENACH, free course (3 steps)
-3. **Biometria, Exame Médico e Psicotécnico** — Scheduling and preparation (3 steps)
-4. **Prova Teórica** — Study guide and exam tips (3 steps)
-5. **Aulas Práticas** — Finding affordable instructors (steps from provided content)
+- **Copy images** to `public/images/` for use in the upsell cards/banners
+- **Add CSS** to `src/index.css` for all new class styles (save-link, upsell, toast, module-upsell-strip)
+- **Update `src/pages/Index.tsx`**:
+  - Add Save Link section after module list in home screen
+  - Add Upsell section after save link
+  - Add Toast container (fixed positioned) with a `useEffect` timer to cycle through upsell toasts
+  - `copyAccess` function for the copy button
+  - Toast show/hide logic with state management
 
-### Progress System
-- Track completed steps per module in localStorage
-- Modules unlock sequentially (must complete previous to unlock next)
-- Overall progress percentage calculated from total completed steps
-- Header mini progress bar always visible
+### Files to modify
+- `src/index.css` — append all new CSS classes
+- `src/pages/Index.tsx` — add save-link section, upsell section, toast system
+- Copy 4 uploaded images to `public/images/`
 
-### Design
-- Exact color scheme from the HTML (green/yellow/white palette)
-- Montserrat + Open Sans fonts
-- Mobile-first layout, full-screen app shell with fixed header and bottom nav
-- All custom components: info boxes, how-lists, link boxes, mock screens, price tables, warning banners, checklists
