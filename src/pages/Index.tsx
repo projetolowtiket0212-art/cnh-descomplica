@@ -4,10 +4,29 @@ import { useProgress } from '@/hooks/useProgress';
 
 const moduleMeta = modules.map(m => ({ id: m.id, stepCount: m.steps.length }));
 
+const APP_URL = 'https://cnh-descomplica.lovable.app';
+
+const UPSELLS = [
+  { name: 'Simulado CNH até Passar', msg: 'Quer passar de primeira? Temos 2.000 questões atualizadas!', url: 'https://pay.kirvano.com/19d7d01f-7042-4446-9681-7798e1a77636', icon: '📝', gold: true },
+  { name: 'Perco Medo do Trânsito', msg: 'Dirija com confiança total desde o primeiro dia!', url: 'https://pay.kirvano.com/67bd6f59-d0c1-44bb-8f37-db013530f916', icon: '🚗', gold: false },
+  { name: 'Perco Medo da Prova Prática', msg: 'Passo a passo infalível para passar no exame!', url: 'https://pay.kirvano.com/29aa4f6e-1757-4803-8050-788a6d17d66d', icon: '🎯', gold: false },
+  { name: 'Passe no Psicotécnico', msg: 'O guia que ninguém te dá — prepare-se de verdade!', url: 'https://pay.kirvano.com/ccb13c57-4995-4faf-a4ea-c1c1e8e5ee33', icon: '🧠', gold: false },
+];
+
+interface PromoToast {
+  id: number;
+  upsell: typeof UPSELLS[number];
+  visible: boolean;
+}
+
 const Index = () => {
   const [screen, setScreen] = useState<'home' | 'module' | 'congrats'>('home');
   const [activeModuleId, setActiveModuleId] = useState(1);
   const [activeStep, setActiveStep] = useState(0);
+  const [copyLabel, setCopyLabel] = useState('📋 Copiar');
+  const [toasts, setToasts] = useState<PromoToast[]>([]);
+  const toastIdRef = useRef(0);
+  const toastIndexRef = useRef(0);
   const contentRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -35,7 +54,6 @@ const Index = () => {
       setActiveStep(s => s + 1);
       contentRef.current?.scrollTo(0, 0);
     } else {
-      // Module complete
       if (allComplete()) {
         setScreen('congrats');
       } else {
@@ -51,13 +69,70 @@ const Index = () => {
     }
   }, [activeStep]);
 
-  // Scroll to top when switching screens
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [screen]);
 
+  // Copy access link
+  const copyAccess = useCallback(() => {
+    navigator.clipboard.writeText(APP_URL).then(() => {
+      setCopyLabel('✅ Copiado!');
+      setTimeout(() => setCopyLabel('📋 Copiar'), 2000);
+    });
+  }, []);
+
+  // Toast notification system
+  useEffect(() => {
+    const showToast = () => {
+      const u = UPSELLS[toastIndexRef.current % UPSELLS.length];
+      toastIndexRef.current++;
+      const id = ++toastIdRef.current;
+
+      setToasts(prev => [...prev, { id, upsell: u, visible: false }]);
+      // Animate in
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setToasts(prev => prev.map(t => t.id === id ? { ...t, visible: true } : t));
+        });
+      });
+      // Animate out after 5s
+      setTimeout(() => {
+        setToasts(prev => prev.map(t => t.id === id ? { ...t, visible: false } : t));
+        setTimeout(() => {
+          setToasts(prev => prev.filter(t => t.id !== id));
+        }, 500);
+      }, 5000);
+    };
+
+    const initialTimer = setTimeout(() => {
+      showToast();
+      const interval = setInterval(showToast, 30000 + Math.random() * 30000);
+      return () => clearInterval(interval);
+    }, 20000);
+
+    return () => clearTimeout(initialTimer);
+  }, []);
+
   return (
     <div className="w-screen h-screen flex flex-col overflow-hidden" style={{ fontFamily: "'Open Sans', sans-serif" }}>
+      {/* TOAST CONTAINER */}
+      <div className="toast-container">
+        {toasts.map(t => (
+          <div
+            key={t.id}
+            className={`promo-toast ${t.upsell.gold ? 'gold' : ''} ${t.visible ? 'show' : ''}`}
+            onClick={() => window.open(t.upsell.url, '_blank')}
+          >
+            <div className="toast-icon">{t.upsell.icon}</div>
+            <div className="toast-body">
+              <div className="toast-title">{t.upsell.name}</div>
+              <div className="toast-sub">{t.upsell.msg}</div>
+            </div>
+            <div className="toast-cta">Ver agora</div>
+          </div>
+        ))}
+      </div>
+
       {/* HEADER */}
       <header className="flex-shrink-0 bg-[hsl(var(--cnh-green))] px-3.5 py-2.5 flex items-center gap-2.5 shadow-lg relative z-20">
         <div className="flex items-center gap-2 flex-1">
@@ -155,6 +230,95 @@ const Index = () => {
                   </div>
                 );
               })}
+            </div>
+
+            {/* SAVE LINK SECTION */}
+            <div className="save-link-section">
+              <div className="save-link-title">🔗 Salve seu acesso agora!</div>
+              <div className="save-link-sub">Guarde este link para não perder o acesso ao seu conteúdo.</div>
+              <div className="save-link-url">
+                <div className="save-link-url-text">{APP_URL}</div>
+                <button className="save-link-copy-btn" onClick={copyAccess}>{copyLabel}</button>
+              </div>
+              <div className="save-options">
+                <a className="save-opt" href={`https://wa.me/?text=Meu%20guia%20CNH%20sem%20autoescola:%20${APP_URL}`} target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
+                <a className="save-opt" href={`mailto:?subject=Meu%20Guia%20CNH&body=Acesse%20aqui:%20${APP_URL}`} target="_blank" rel="noopener noreferrer">✉️ E-mail</a>
+                <button className="save-opt" onClick={copyAccess}>📸 Copiar link</button>
+              </div>
+            </div>
+
+            {/* UPSELL SECTION */}
+            <div className="upsell-section">
+              <div className="upsell-header">
+                <div className="upsell-header-line" />
+                <div className="upsell-header-text">🔓 Complete sua jornada</div>
+                <div className="upsell-header-line" />
+              </div>
+
+              {/* Featured banner */}
+              <div className="upsell-banner" onClick={() => window.open('https://pay.kirvano.com/19d7d01f-7042-4446-9681-7798e1a77636', '_blank')}>
+                <div className="banner-img-wrap">
+                  <img src="/images/simulado-banner.png" alt="Simulado CNH" />
+                  <div className="banner-badge">⭐ Mais vendido</div>
+                  <div className="banner-lock">🔒</div>
+                </div>
+                <div className="banner-body">
+                  <div className="banner-title">Simulado CNH até Passar 2026</div>
+                  <div className="banner-desc">Mais de 2.000 questões atualizadas no estilo exato da prova do DETRAN.</div>
+                  <div className="banner-price-row">
+                    <div className="banner-price">R$ 29,90<span>acesso vitalício</span></div>
+                    <button className="banner-btn">🔓 Quero agora</button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Upsell grid */}
+              <div className="upsell-grid">
+                <div className="upsell-card" onClick={() => window.open('https://pay.kirvano.com/67bd6f59-d0c1-44bb-8f37-db013530f916', '_blank')}>
+                  <div className="upsell-card-img">
+                    <img src="/images/medo-transito.png" alt="Perco Medo do Trânsito" />
+                    <div className="upsell-card-lock">🔒</div>
+                  </div>
+                  <div className="upsell-card-body">
+                    <div className="upsell-card-title">Perco Medo do Trânsito</div>
+                    <div className="upsell-card-desc">Dirija com confiança desde o primeiro dia.</div>
+                    <div className="upsell-card-footer">
+                      <div className="upsell-card-price">R$ 15,90</div>
+                      <button className="upsell-card-btn">🔓 Acessar</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="upsell-card" onClick={() => window.open('https://pay.kirvano.com/29aa4f6e-1757-4803-8050-788a6d17d66d', '_blank')}>
+                  <div className="upsell-card-img">
+                    <img src="/images/medo-prova.png" alt="Perco Medo da Prova Prática" />
+                    <div className="upsell-card-lock">🔒</div>
+                  </div>
+                  <div className="upsell-card-body">
+                    <div className="upsell-card-title">Perco Medo da Prova Prática</div>
+                    <div className="upsell-card-desc">Passo a passo infalível para o exame prático.</div>
+                    <div className="upsell-card-footer">
+                      <div className="upsell-card-price">R$ 19,90</div>
+                      <button className="upsell-card-btn">🔓 Acessar</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="upsell-card" onClick={() => window.open('https://pay.kirvano.com/ccb13c57-4995-4faf-a4ea-c1c1e8e5ee33', '_blank')}>
+                  <div className="upsell-card-img">
+                    <img src="/images/psicotecnico.png" alt="Passe no Psicotécnico" />
+                    <div className="upsell-card-lock">🔒</div>
+                  </div>
+                  <div className="upsell-card-body">
+                    <div className="upsell-card-title">Passe no Psicotécnico</div>
+                    <div className="upsell-card-desc">O guia que ninguém te dá.</div>
+                    <div className="upsell-card-footer">
+                      <div className="upsell-card-price">R$ 9,90</div>
+                      <button className="upsell-card-btn">🔓 Acessar</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
