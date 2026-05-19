@@ -276,6 +276,24 @@ const Index = () => {
               </div>
 
               {/* Featured banner */}
+              {/* App do Instrutor banner */}
+              <div className="upsell-banner" onClick={() => window.open(APP_INSTRUTOR_URL, '_blank')}>
+                <div className="banner-img-wrap">
+                  <img src={APP_INSTRUTOR_IMG} alt="App do Instrutor" />
+                  <div className="banner-badge">⭐ Mais vendido</div>
+                  <div className="banner-lock">🔒</div>
+                </div>
+                <div className="banner-body">
+                  <div className="banner-title">App do Instrutor — Aulas Práticas Sem Pagar Caro</div>
+                  <div className="banner-desc">Encontre instrutores particulares certificados perto de você e economize até 60% nas aulas práticas.</div>
+                  <div className="banner-price-row">
+                    <div className="banner-price">R$ 47,00<span>acesso vitalício</span></div>
+                    <button className="banner-btn">🔓 Quero agora</button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Featured banner */}
               <div className="upsell-banner" onClick={() => window.open('https://pay.kirvano.com/19d7d01f-7042-4446-9681-7798e1a77636', '_blank')}>
                 <div className="banner-img-wrap">
                   <img src="/images/psicotecnico.png" alt="Simulado CNH" />
