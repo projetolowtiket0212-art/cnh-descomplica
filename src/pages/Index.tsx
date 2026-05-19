@@ -444,6 +444,28 @@ const Index = () => {
           </div>
         )}
       </main>
+
+      {/* SALES POPUPS */}
+      {showSimuladoPopup && (
+        <SalesPopup
+          image={SIMULADO_IMG}
+          title="Você está estudando — aproveite para simular a prova!"
+          text="Mais de 2.000 questões no estilo exato do DETRAN. Garanta agora por R$ 29,90."
+          ctaLabel="Quero o Simulado"
+          ctaUrl={SIMULADO_URL}
+          onClose={() => setShowSimuladoPopup(false)}
+        />
+      )}
+      {showInstrutorPopup && (
+        <SalesPopup
+          image={APP_INSTRUTOR_IMG}
+          title="Agora que você sabe o caminho, economize nas aulas práticas!"
+          text="Encontre instrutores certificados perto de você por muito menos. Acesso vitalício por R$ 47."
+          ctaLabel="Quero economizar nas aulas"
+          ctaUrl={APP_INSTRUTOR_URL}
+          onClose={() => setShowInstrutorPopup(false)}
+        />
+      )}
     </div>
   );
 };
