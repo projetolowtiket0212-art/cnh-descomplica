@@ -196,21 +196,13 @@ const Index = () => {
               </div>
             </div>
 
-            {/* SAVE LINK SECTION */}
-            <div className="save-link-section">
-              <div className="save-link-icon">🔗</div>
-              <div className="save-link-title">Salve seu acesso!</div>
-              <div className="save-link-sub">Guarde este link para não perder seu conteúdo</div>
-              <div className="save-link-url">
-                <div className="save-link-url-text">{APP_URL}</div>
-                <button className="save-link-copy-btn" onClick={copyAccess}>{copyLabel}</button>
-              </div>
-              <div className="save-options">
-                <a className="save-opt" href={`https://wa.me/?text=Meu%20guia%20CNH%20sem%20autoescola:%20${APP_URL}`} target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
-                <a className="save-opt" href={`mailto:?subject=Meu%20Guia%20CNH&body=Acesse%20aqui:%20${APP_URL}`} target="_blank" rel="noopener noreferrer">✉️ E-mail</a>
-                <button className="save-opt" onClick={copyAccess}>📸 Copiar link</button>
-              </div>
+            {/* VIDEO + INTRO TEXT */}
+            <VideoPlayer videoId="4E1z9J3wpfQ" onEnded={handleVideoEnded} />
+            <div className="video-intro-text">
+              <div className="video-intro-title">📖 Prefere ler? O guia completo está aqui embaixo</div>
+              <div className="video-intro-sub">Este produto foi 100% pensado em você. Além do vídeo, todos os módulos estão disponíveis em formato de leitura detalhada logo abaixo — no seu ritmo, quando quiser.</div>
             </div>
+
 
             {/* Overall progress */}
             <div className="px-4 py-4 bg-white border-b border-[hsl(var(--border))]">
