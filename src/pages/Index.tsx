@@ -1,8 +1,16 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { modules } from '@/data/modules';
 import { useProgress } from '@/hooks/useProgress';
+import VideoPlayer from '@/components/VideoPlayer';
+import SalesPopup from '@/components/SalesPopup';
 
 const moduleMeta = modules.map(m => ({ id: m.id, stepCount: m.steps.length }));
+
+const MODULE_BORDER_COLORS = ['#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444', '#10B981'];
+const SIMULADO_URL = 'https://pay.kirvano.com/19d7d01f-7042-4446-9681-7798e1a77636';
+const APP_INSTRUTOR_URL = 'https://go.pepperpay.com.br/0vign';
+const APP_INSTRUTOR_IMG = '/images/app-instrutor.png';
+const SIMULADO_IMG = '/images/psicotecnico.png';
 
 const APP_URL = 'https://cnh-descomplica.lovable.app';
 
