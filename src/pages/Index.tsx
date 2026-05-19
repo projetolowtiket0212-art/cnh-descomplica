@@ -154,7 +154,14 @@ const Index = () => {
       {/* HEADER */}
       <header className="flex-shrink-0 bg-[hsl(var(--cnh-green))] px-3.5 py-2.5 flex items-center gap-2.5 shadow-lg relative z-20">
         <div className="flex items-center gap-2 flex-1">
-          <div className="w-[34px] h-[34px] bg-[hsl(var(--cnh-yellow))] rounded-lg flex items-center justify-center text-lg flex-shrink-0">🚗</div>
+          <div className="w-[34px] h-[34px] bg-[hsl(var(--cnh-yellow))] rounded-lg flex items-center justify-center flex-shrink-0" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="hsl(var(--cnh-green))" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 14l1.5-4.5A2 2 0 0 1 7.4 8h9.2a2 2 0 0 1 1.9 1.5L20 14" />
+              <rect x="3" y="14" width="18" height="5" rx="1.5" />
+              <circle cx="7.5" cy="16.5" r="1" fill="hsl(var(--cnh-green))" />
+              <circle cx="16.5" cy="16.5" r="1" fill="hsl(var(--cnh-green))" />
+            </svg>
+          </div>
           <div>
             <div className="font-heading font-black text-[0.82rem] text-white leading-tight">CNH Sem Autoescola</div>
             <span className="font-heading text-[hsl(var(--cnh-yellow))] text-[0.65rem] font-semibold">O Que Não Estão Te Contando</span>
