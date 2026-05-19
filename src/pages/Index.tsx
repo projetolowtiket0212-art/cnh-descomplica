@@ -220,16 +220,18 @@ const Index = () => {
 
             {/* Module list */}
             <div className="px-3.5 py-3 pb-6 flex flex-col gap-2.5">
-              {modules.map(mod => {
+              {modules.map((mod, idx) => {
                 const unlocked = isModuleUnlocked(mod.id);
                 const done = isModuleComplete(mod.id);
                 const completedCount = getModuleCompletedCount(mod.id);
                 const progressPct = (completedCount / mod.steps.length) * 100;
+                const borderColor = MODULE_BORDER_COLORS[idx % MODULE_BORDER_COLORS.length];
 
                 return (
                   <div
                     key={mod.id}
                     onClick={() => openModule(mod.id)}
+                    style={{ borderLeft: `4px solid ${borderColor}` }}
                     className={`bg-white border rounded-2xl overflow-hidden shadow-sm transition-all duration-150 ${
                       done ? 'border-[hsl(var(--cnh-green))]' : 'border-[hsl(var(--border))]'
                     } ${unlocked ? 'cursor-pointer hover:-translate-y-0.5 hover:shadow-md' : 'opacity-55 cursor-not-allowed'}`}
