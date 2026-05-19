@@ -1,10 +1,18 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { modules } from '@/data/modules';
 import { useProgress } from '@/hooks/useProgress';
+import VideoPlayer from '@/components/VideoPlayer';
+import SalesPopup from '@/components/SalesPopup';
 
 const moduleMeta = modules.map(m => ({ id: m.id, stepCount: m.steps.length }));
 
-const APP_URL = 'https://cnh-descomplica.lovable.app';
+const MODULE_BORDER_COLORS = ['#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444', '#10B981'];
+const SIMULADO_URL = 'https://pay.kirvano.com/19d7d01f-7042-4446-9681-7798e1a77636';
+const APP_INSTRUTOR_URL = 'https://go.pepperpay.com.br/0vign';
+const APP_INSTRUTOR_IMG = '/images/app-instrutor.png';
+const SIMULADO_IMG = '/images/psicotecnico.png';
+
+
 
 const UPSELLS = [
   { name: 'Simulado CNH até Passar', msg: 'Quer passar de primeira? Temos 2.000 questões atualizadas!', url: 'https://pay.kirvano.com/19d7d01f-7042-4446-9681-7798e1a77636', icon: '📝', gold: true },
@@ -23,8 +31,9 @@ const Index = () => {
   const [screen, setScreen] = useState<'home' | 'module' | 'congrats'>('home');
   const [activeModuleId, setActiveModuleId] = useState(1);
   const [activeStep, setActiveStep] = useState(0);
-  const [copyLabel, setCopyLabel] = useState('📋 Copiar');
   const [toasts, setToasts] = useState<PromoToast[]>([]);
+  const [showSimuladoPopup, setShowSimuladoPopup] = useState(false);
+  const [showInstrutorPopup, setShowInstrutorPopup] = useState(false);
   const toastIdRef = useRef(0);
   const toastIndexRef = useRef(0);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -73,13 +82,22 @@ const Index = () => {
     window.scrollTo(0, 0);
   }, [screen]);
 
-  // Copy access link
-  const copyAccess = useCallback(() => {
-    navigator.clipboard.writeText(APP_URL).then(() => {
-      setCopyLabel('✅ Copiado!');
-      setTimeout(() => setCopyLabel('📋 Copiar'), 2000);
-    });
+  // Sales popup 1 (Simulado) — 30s after open, once per session
+  useEffect(() => {
+    if (sessionStorage.getItem('popup_simulado_shown')) return;
+    const t = setTimeout(() => {
+      sessionStorage.setItem('popup_simulado_shown', '1');
+      setShowSimuladoPopup(true);
+    }, 30000);
+    return () => clearTimeout(t);
   }, []);
+
+  const handleVideoEnded = useCallback(() => {
+    if (sessionStorage.getItem('popup_instrutor_shown')) return;
+    sessionStorage.setItem('popup_instrutor_shown', '1');
+    setShowInstrutorPopup(true);
+  }, []);
+
 
   // Toast notification system
   useEffect(() => {
@@ -136,7 +154,14 @@ const Index = () => {
       {/* HEADER */}
       <header className="flex-shrink-0 bg-[hsl(var(--cnh-green))] px-3.5 py-2.5 flex items-center gap-2.5 shadow-lg relative z-20">
         <div className="flex items-center gap-2 flex-1">
-          <div className="w-[34px] h-[34px] bg-[hsl(var(--cnh-yellow))] rounded-lg flex items-center justify-center text-lg flex-shrink-0">🚗</div>
+          <div className="w-[34px] h-[34px] bg-[hsl(var(--cnh-yellow))] rounded-lg flex items-center justify-center flex-shrink-0" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="hsl(var(--cnh-green))" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 14l1.5-4.5A2 2 0 0 1 7.4 8h9.2a2 2 0 0 1 1.9 1.5L20 14" />
+              <rect x="3" y="14" width="18" height="5" rx="1.5" />
+              <circle cx="7.5" cy="16.5" r="1" fill="hsl(var(--cnh-green))" />
+              <circle cx="16.5" cy="16.5" r="1" fill="hsl(var(--cnh-green))" />
+            </svg>
+          </div>
           <div>
             <div className="font-heading font-black text-[0.82rem] text-white leading-tight">CNH Sem Autoescola</div>
             <span className="font-heading text-[hsl(var(--cnh-yellow))] text-[0.65rem] font-semibold">O Que Não Estão Te Contando</span>
@@ -171,21 +196,13 @@ const Index = () => {
               </div>
             </div>
 
-            {/* SAVE LINK SECTION */}
-            <div className="save-link-section">
-              <div className="save-link-icon">🔗</div>
-              <div className="save-link-title">Salve seu acesso!</div>
-              <div className="save-link-sub">Guarde este link para não perder seu conteúdo</div>
-              <div className="save-link-url">
-                <div className="save-link-url-text">{APP_URL}</div>
-                <button className="save-link-copy-btn" onClick={copyAccess}>{copyLabel}</button>
-              </div>
-              <div className="save-options">
-                <a className="save-opt" href={`https://wa.me/?text=Meu%20guia%20CNH%20sem%20autoescola:%20${APP_URL}`} target="_blank" rel="noopener noreferrer">💬 WhatsApp</a>
-                <a className="save-opt" href={`mailto:?subject=Meu%20Guia%20CNH&body=Acesse%20aqui:%20${APP_URL}`} target="_blank" rel="noopener noreferrer">✉️ E-mail</a>
-                <button className="save-opt" onClick={copyAccess}>📸 Copiar link</button>
-              </div>
+            {/* VIDEO + INTRO TEXT */}
+            <VideoPlayer videoId="4E1z9J3wpfQ" onEnded={handleVideoEnded} />
+            <div className="video-intro-text">
+              <div className="video-intro-title">📖 Prefere ler? O guia completo está aqui embaixo</div>
+              <div className="video-intro-sub">Este produto foi 100% pensado em você. Além do vídeo, todos os módulos estão disponíveis em formato de leitura detalhada logo abaixo — no seu ritmo, quando quiser.</div>
             </div>
+
 
             {/* Overall progress */}
             <div className="px-4 py-4 bg-white border-b border-[hsl(var(--border))]">
@@ -203,16 +220,18 @@ const Index = () => {
 
             {/* Module list */}
             <div className="px-3.5 py-3 pb-6 flex flex-col gap-2.5">
-              {modules.map(mod => {
+              {modules.map((mod, idx) => {
                 const unlocked = isModuleUnlocked(mod.id);
                 const done = isModuleComplete(mod.id);
                 const completedCount = getModuleCompletedCount(mod.id);
                 const progressPct = (completedCount / mod.steps.length) * 100;
+                const borderColor = MODULE_BORDER_COLORS[idx % MODULE_BORDER_COLORS.length];
 
                 return (
                   <div
                     key={mod.id}
                     onClick={() => openModule(mod.id)}
+                    style={{ borderLeft: `4px solid ${borderColor}` }}
                     className={`bg-white border rounded-2xl overflow-hidden shadow-sm transition-all duration-150 ${
                       done ? 'border-[hsl(var(--cnh-green))]' : 'border-[hsl(var(--border))]'
                     } ${unlocked ? 'cursor-pointer hover:-translate-y-0.5 hover:shadow-md' : 'opacity-55 cursor-not-allowed'}`}
@@ -254,6 +273,24 @@ const Index = () => {
                 <div className="upsell-header-line" />
                 <div className="upsell-header-text">🔓 Complete sua jornada</div>
                 <div className="upsell-header-line" />
+              </div>
+
+              {/* Featured banner */}
+              {/* App do Instrutor banner */}
+              <div className="upsell-banner" onClick={() => window.open(APP_INSTRUTOR_URL, '_blank')}>
+                <div className="banner-img-wrap">
+                  <img src={APP_INSTRUTOR_IMG} alt="App do Instrutor" />
+                  <div className="banner-badge">⭐ Mais vendido</div>
+                  <div className="banner-lock">🔒</div>
+                </div>
+                <div className="banner-body">
+                  <div className="banner-title">App do Instrutor — Aulas Práticas Sem Pagar Caro</div>
+                  <div className="banner-desc">Encontre instrutores particulares certificados perto de você e economize até 60% nas aulas práticas.</div>
+                  <div className="banner-price-row">
+                    <div className="banner-price">R$ 47,00<span>acesso vitalício</span></div>
+                    <button className="banner-btn">🔓 Quero agora</button>
+                  </div>
+                </div>
               </div>
 
               {/* Featured banner */}
@@ -407,6 +444,28 @@ const Index = () => {
           </div>
         )}
       </main>
+
+      {/* SALES POPUPS */}
+      {showSimuladoPopup && (
+        <SalesPopup
+          image={SIMULADO_IMG}
+          title="Você está estudando — aproveite para simular a prova!"
+          text="Mais de 2.000 questões no estilo exato do DETRAN. Garanta agora por R$ 29,90."
+          ctaLabel="Quero o Simulado"
+          ctaUrl={SIMULADO_URL}
+          onClose={() => setShowSimuladoPopup(false)}
+        />
+      )}
+      {showInstrutorPopup && (
+        <SalesPopup
+          image={APP_INSTRUTOR_IMG}
+          title="Agora que você sabe o caminho, economize nas aulas práticas!"
+          text="Encontre instrutores certificados perto de você por muito menos. Acesso vitalício por R$ 47."
+          ctaLabel="Quero economizar nas aulas"
+          ctaUrl={APP_INSTRUTOR_URL}
+          onClose={() => setShowInstrutorPopup(false)}
+        />
+      )}
     </div>
   );
 };
