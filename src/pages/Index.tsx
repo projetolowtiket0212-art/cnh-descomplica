@@ -31,8 +31,9 @@ const Index = () => {
   const [screen, setScreen] = useState<'home' | 'module' | 'congrats'>('home');
   const [activeModuleId, setActiveModuleId] = useState(1);
   const [activeStep, setActiveStep] = useState(0);
-  const [copyLabel, setCopyLabel] = useState('📋 Copiar');
   const [toasts, setToasts] = useState<PromoToast[]>([]);
+  const [showSimuladoPopup, setShowSimuladoPopup] = useState(false);
+  const [showInstrutorPopup, setShowInstrutorPopup] = useState(false);
   const toastIdRef = useRef(0);
   const toastIndexRef = useRef(0);
   const contentRef = useRef<HTMLDivElement>(null);
