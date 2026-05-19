@@ -82,13 +82,22 @@ const Index = () => {
     window.scrollTo(0, 0);
   }, [screen]);
 
-  // Copy access link
-  const copyAccess = useCallback(() => {
-    navigator.clipboard.writeText(APP_URL).then(() => {
-      setCopyLabel('✅ Copiado!');
-      setTimeout(() => setCopyLabel('📋 Copiar'), 2000);
-    });
+  // Sales popup 1 (Simulado) — 30s after open, once per session
+  useEffect(() => {
+    if (sessionStorage.getItem('popup_simulado_shown')) return;
+    const t = setTimeout(() => {
+      sessionStorage.setItem('popup_simulado_shown', '1');
+      setShowSimuladoPopup(true);
+    }, 30000);
+    return () => clearTimeout(t);
   }, []);
+
+  const handleVideoEnded = useCallback(() => {
+    if (sessionStorage.getItem('popup_instrutor_shown')) return;
+    sessionStorage.setItem('popup_instrutor_shown', '1');
+    setShowInstrutorPopup(true);
+  }, []);
+
 
   // Toast notification system
   useEffect(() => {
