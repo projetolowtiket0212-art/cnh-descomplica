@@ -12,7 +12,7 @@ const APP_INSTRUTOR_URL = 'https://go.pepperpay.com.br/0vign';
 const APP_INSTRUTOR_IMG = '/images/app-instrutor.png';
 const SIMULADO_IMG = '/images/psicotecnico.png';
 
-const APP_URL = 'https://cnh-descomplica.lovable.app';
+
 
 const UPSELLS = [
   { name: 'Simulado CNH até Passar', msg: 'Quer passar de primeira? Temos 2.000 questões atualizadas!', url: 'https://pay.kirvano.com/19d7d01f-7042-4446-9681-7798e1a77636', icon: '📝', gold: true },
