@@ -315,7 +315,7 @@ const Index = () => {
 
               {/* Upsell grid */}
               <div className="upsell-grid">
-                <div className="upsell-card" onClick={() => window.open('https://pay.kirvano.com/67bd6f59-d0c1-44bb-8f37-db013530f916', '_blank')}>
+                <div className="upsell-card" onClick={() => window.open(MEDO_TRANSITO_URL, '_blank')}>
                   <div className="upsell-card-img">
                     <img src="/images/simulado-banner.png" alt="Perco Medo do Trânsito" />
                     <div className="upsell-card-lock">🔒</div>
