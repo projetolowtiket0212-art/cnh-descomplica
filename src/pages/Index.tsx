@@ -7,7 +7,10 @@ import SalesPopup from '@/components/SalesPopup';
 const moduleMeta = modules.map(m => ({ id: m.id, stepCount: m.steps.length }));
 
 const MODULE_BORDER_COLORS = ['#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444', '#10B981'];
-const SIMULADO_URL = 'https://pay.kirvano.com/19d7d01f-7042-4446-9681-7798e1a77636';
+const SIMULADO_URL = 'https://go.pepperpay.com.br/cdd0x';
+const MEDO_TRANSITO_URL = 'https://go.pepperpay.com.br/y1f6a';
+const MEDO_PROVA_URL = 'https://go.pepperpay.com.br/p5w2x';
+const PSICOTECNICO_URL = 'https://go.pepperpay.com.br/xvkf2';
 const APP_INSTRUTOR_URL = 'https://go.pepperpay.com.br/0vign';
 const APP_INSTRUTOR_IMG = '/images/app-instrutor.png';
 const SIMULADO_IMG = '/images/psicotecnico.png';
@@ -294,7 +297,7 @@ const Index = () => {
               </div>
 
               {/* Featured banner */}
-              <div className="upsell-banner" onClick={() => window.open('https://pay.kirvano.com/19d7d01f-7042-4446-9681-7798e1a77636', '_blank')}>
+              <div className="upsell-banner" onClick={() => window.open(SIMULADO_URL, '_blank')}>
                 <div className="banner-img-wrap">
                   <img src="/images/psicotecnico.png" alt="Simulado CNH" />
                   <div className="banner-badge">⭐ Mais vendido</div>
@@ -312,7 +315,7 @@ const Index = () => {
 
               {/* Upsell grid */}
               <div className="upsell-grid">
-                <div className="upsell-card" onClick={() => window.open('https://pay.kirvano.com/67bd6f59-d0c1-44bb-8f37-db013530f916', '_blank')}>
+                <div className="upsell-card" onClick={() => window.open(MEDO_TRANSITO_URL, '_blank')}>
                   <div className="upsell-card-img">
                     <img src="/images/simulado-banner.png" alt="Perco Medo do Trânsito" />
                     <div className="upsell-card-lock">🔒</div>
@@ -327,7 +330,7 @@ const Index = () => {
                   </div>
                 </div>
 
-                <div className="upsell-card" onClick={() => window.open('https://pay.kirvano.com/29aa4f6e-1757-4803-8050-788a6d17d66d', '_blank')}>
+                <div className="upsell-card" onClick={() => window.open(MEDO_PROVA_URL, '_blank')}>
                   <div className="upsell-card-img">
                     <img src="/images/medo-transito.png" alt="Perco Medo da Prova Prática" />
                     <div className="upsell-card-lock">🔒</div>
@@ -342,7 +345,7 @@ const Index = () => {
                   </div>
                 </div>
 
-                <div className="upsell-card" onClick={() => window.open('https://pay.kirvano.com/ccb13c57-4995-4faf-a4ea-c1c1e8e5ee33', '_blank')}>
+                <div className="upsell-card" onClick={() => window.open(PSICOTECNICO_URL, '_blank')}>
                   <div className="upsell-card-img">
                     <img src="/images/medo-prova.png" alt="Passe no Psicotécnico" />
                     <div className="upsell-card-lock">🔒</div>
