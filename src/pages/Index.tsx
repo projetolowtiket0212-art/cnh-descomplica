@@ -345,7 +345,7 @@ const Index = () => {
                   </div>
                 </div>
 
-                <div className="upsell-card" onClick={() => window.open('https://pay.kirvano.com/ccb13c57-4995-4faf-a4ea-c1c1e8e5ee33', '_blank')}>
+                <div className="upsell-card" onClick={() => window.open(PSICOTECNICO_URL, '_blank')}>
                   <div className="upsell-card-img">
                     <img src="/images/medo-prova.png" alt="Passe no Psicotécnico" />
                     <div className="upsell-card-lock">🔒</div>
