@@ -297,7 +297,7 @@ const Index = () => {
               </div>
 
               {/* Featured banner */}
-              <div className="upsell-banner" onClick={() => window.open('https://pay.kirvano.com/19d7d01f-7042-4446-9681-7798e1a77636', '_blank')}>
+              <div className="upsell-banner" onClick={() => window.open(SIMULADO_URL, '_blank')}>
                 <div className="banner-img-wrap">
                   <img src="/images/psicotecnico.png" alt="Simulado CNH" />
                   <div className="banner-badge">⭐ Mais vendido</div>
