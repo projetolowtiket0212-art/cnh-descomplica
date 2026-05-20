@@ -7,7 +7,10 @@ import SalesPopup from '@/components/SalesPopup';
 const moduleMeta = modules.map(m => ({ id: m.id, stepCount: m.steps.length }));
 
 const MODULE_BORDER_COLORS = ['#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444', '#10B981'];
-const SIMULADO_URL = 'https://pay.kirvano.com/19d7d01f-7042-4446-9681-7798e1a77636';
+const SIMULADO_URL = 'https://go.pepperpay.com.br/cdd0x';
+const MEDO_TRANSITO_URL = 'https://go.pepperpay.com.br/y1f6a';
+const MEDO_PROVA_URL = 'https://go.pepperpay.com.br/p5w2x';
+const PSICOTECNICO_URL = 'https://go.pepperpay.com.br/xvkf2';
 const APP_INSTRUTOR_URL = 'https://go.pepperpay.com.br/0vign';
 const APP_INSTRUTOR_IMG = '/images/app-instrutor.png';
 const SIMULADO_IMG = '/images/psicotecnico.png';
