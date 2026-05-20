@@ -1,62 +1,67 @@
-## Mudanças no app CNH Sem Autoescola
+## Mudanças
 
-Toda a lógica de progresso, conteúdo dos módulos, cores gerais e checkouts existentes ficam intactos.
+### 1. Player de vídeo (src/components/VideoPlayer.tsx + src/index.css)
+- Reforçar máscaras para esconder título do topo e barra inferior do YouTube (overlays absolutos cobrindo top ~60px e bottom ~60px do iframe, `pointer-events:none` exceto onde precisamos clicar).
+- Parâmetros iframe: `rel=0&modestbranding=1&controls=0&showinfo=0&iv_load_policy=3&enablejsapi=1&playsinline=1&fs=0&disablekb=1` (já presentes — manter).
+- Estado inicial: overlay escuro semitransparente cobre todo iframe + botão play central (círculo verde #16a34a, ícone branco 64px). Ao clicar, overlay desaparece e vídeo dá play.
+- Barra de progresso: 4px, verde #16a34a, sem branding YouTube, fixada no fundo do player.
+- Controles inferiores direita: volume e fullscreen em branco/cinza, sempre visíveis enquanto tocando.
+- Wrapper: largura 100%, aspect-ratio 16:9, border-radius 16px, box-shadow premium. Reduzir padding lateral do container pai em Index.tsx.
 
-### 1. Header — novo ícone SVG
-Em `src/pages/Index.tsx`, remover o emoji/ícone atual ao lado de "CNH Sem Autoescola" e substituir por um SVG inline minimalista (carro/volante estilizado com traços finos, formas geométricas) usando as cores verde (`var(--green)`) e amarelo do tema. Mesmo tamanho do anterior, sem alterar o layout do header.
+### 2. Links de checkout (src/pages/Index.tsx)
+Substituir nos cards do upsell:
+- "Simulado CNH até Passar 2026" → `https://go.pepperpay.com.br/cdd0x`
+- "Perco Medo do Trânsito" → `https://go.pepperpay.com.br/y1f6a`
+- "Perco Medo da Prova Prática" → `https://go.pepperpay.com.br/p5w2x`
+- "Passe no Psicotécnico" → `https://go.pepperpay.com.br/xvkf2`
 
-### 2. Remover seção "Salve seu acesso"
-Em `src/pages/Index.tsx`, deletar todo o bloco `.save-link-section` (texto, link, botões WhatsApp/E-mail/Copiar). Em `src/index.css`, remover (ou deixar órfãs) as classes correspondentes. O conteúdo seguinte sobe naturalmente.
+Também atualizar a constante de checkout do SalesPopup do Simulado para o novo link. Manter App do Instrutor (`0vign`) intacto e não tocar nos toasts promocionais (links separados de avisos, não checkout direto).
 
-### 3. Vídeo do YouTube com controles customizados
-No lugar onde estava o save-link, criar um componente `VideoPlayer` (novo arquivo `src/components/VideoPlayer.tsx`) com:
-- `<iframe>` para `https://www.youtube.com/embed/4E1z9J3wpfQ?rel=0&modestbranding=1&controls=0&showinfo=0&iv_load_policy=3&enablejsapi=1`
-- Wrapper 16:9, `border-radius: 12px`, sombra suave, largura 100%
-- Overlay absoluto cobrindo toda a área do iframe com:
-  - Botão play/pause central (ícone verde via lucide-react)
-  - Barra de progresso fina no rodapé (verde), atualizada via `setInterval` lendo `getCurrentTime`/`getDuration`
-  - Botões de volume (mute/unmute) e fullscreen (branco/cinza) no canto inferior direito
-- Carregamento dinâmico de `https://www.youtube.com/iframe_api` via script tag (uma vez)
-- `window.onYouTubeIframeAPIReady` cria o `YT.Player` com `events.onStateChange` exposto via prop `onEnded` para o pai
-- Camadas absolutas extras (topo e cantos) escondem qualquer branding do YouTube
-- Cliques no overlay (fora dos botões) fazem play/pause
+### 3. Redesign visual (src/index.css + Index.tsx, sem mexer em lógica)
+Aplicar tema cinematográfico neon glassmorphism:
 
-### 4. Texto abaixo do vídeo
-Logo abaixo do `VideoPlayer`, adicionar bloco com:
-- Título em negrito (verde escuro): "📖 Prefere ler? O guia completo está aqui embaixo"
-- Subtítulo menor (cinza): "Este produto foi 100% pensado em você. Além do vídeo, todos os módulos estão disponíveis em formato de leitura detalhada logo abaixo — no seu ritmo, quando quiser."
+**Fundo global**
+- `body`: background `#050505` com gradiente radial roxo `#1a0033` no centro.
+- Camada fixa de partículas via CSS puro (pseudo-elementos com `radial-gradient` repetido + `@keyframes float` lento, opacidade baixa).
 
-CSS dedicado em `src/index.css` (`.video-intro-text`).
+**Header**
+- `rgba(255,255,255,0.05)` + `backdrop-filter: blur(20px)`, borda `rgba(255,255,255,0.1)`.
+- Ícone SVG já presente recolorido para gradiente neon azul→roxo (`#6366f1`→`#8b5cf6`).
+- Progress bar do header em gradiente azul-roxo.
 
-### 5. Bordas coloridas nos módulos
-Na lista de módulos em `src/pages/Index.tsx`, aplicar `border-left: 4px solid {cor}` inline por índice:
-- 0 → `#3B82F6` · 1 → `#8B5CF6` · 2 → `#F59E0B` · 3 → `#EF4444` · 4 → `#10B981`
+**Cards dos módulos**
+- Fundo `rgba(255,255,255,0.04)`, blur 12px, borda `rgba(255,255,255,0.08)`, box-shadow `0 8px 32px rgba(0,0,0,0.4)`.
+- Mantém borda esquerda colorida por módulo.
+- Hover 3D: `perspective(1000px) rotateX(2deg) rotateY(2deg)` com transição 0.3s.
+- Título branco, subtítulo `#9ca3af`.
 
-Resto do card inalterado.
+**Cards de upsell ("Complete sua Jornada")**
+- Mesmo glass + borda `1px solid rgba(99,102,241,0.3)`.
+- Hover: `box-shadow 0 0 20px rgba(99,102,241,0.2)`.
+- Separador sutil entre banners grandes e grid pequeno.
+- Título de seção com gradiente neon via `background-clip:text`.
 
-### 6. Novo card "App do Instrutor" na seção Upsell
-- Copiar a imagem enviada para `public/images/app-instrutor.png`
-- Inserir ACIMA do card "Simulado CNH até Passar 2026", com a mesma estrutura/markup do card do Simulado:
-  - Badge amarela "MAIS VENDIDO"
-  - Imagem `app-instrutor.png`
-  - Título: "App do Instrutor — Aulas Práticas Sem Pagar Caro"
-  - Descrição: "Encontre instrutores particulares certificados perto de você e economize até 60% nas aulas práticas."
-  - Preço: R$ 47,00 · sublinha "acesso vitalício"
-  - Botão verde escuro "Quero agora" → `https://go.pepperpay.com.br/0vign`
+**Botões**
+- Gradiente `linear-gradient(135deg,#6366f1,#8b5cf6)`, radius 10px, texto branco.
+- Hover: brilho + `scale(1.03)`.
 
-### 7. Popups de venda
-Novo componente `src/components/SalesPopup.tsx` reutilizável (imagem, título, texto, CTA label/URL, onClose). CSS em `src/index.css`:
-- Overlay preto 60%, popup centralizado, `border-radius: 16px`, animação fade+scale (keyframes CSS — animação one-shot na montagem, ok pois é só apresentação)
-- Mobile: 90% da largura
-- Botão X no canto superior direito
+**Tipografia**
+- Fonte Inter/system-ui. Headings `#fff` peso 700, body `#d1d5db`, preços com gradiente neon.
 
-Em `Index.tsx`, dois `useState` + lógica:
-- **Popup 1 (Simulado)**: `setTimeout` 30s no mount; flag `sessionStorage` `popup_simulado_shown`. CTA usa o mesmo link de checkout do Simulado já presente no arquivo.
-- **Popup 2 (App do Instrutor)**: disparado pelo callback `onEnded` do `VideoPlayer` (state = 0 do YT API); flag `sessionStorage` `popup_instrutor_shown`. CTA → `https://go.pepperpay.com.br/0vign`.
+**Animações**
+- Keyframe `float` 6s ease-in-out infinite para cards.
+- IntersectionObserver leve em Index.tsx adiciona classe `.in-view` para fade+translateY nos blocos principais.
+- Transições gerais 0.3s ease.
+
+**Seção "Bem-vindo ao guia"**
+- Badge com glass + borda neon roxo.
+- Destaque "CNH" no título com gradiente.
 
 ### Arquivos
-- `src/pages/Index.tsx` — header icon, remover save-link, inserir VideoPlayer + texto, bordas dos módulos, novo card upsell, montar popups
-- `src/components/VideoPlayer.tsx` — novo
-- `src/components/SalesPopup.tsx` — novo
-- `src/index.css` — estilos do video player, intro-text, popup; remover save-link
-- `public/images/app-instrutor.png` — imagem do produto (a partir do upload)
+- `src/components/VideoPlayer.tsx` — máscaras + estado overlay inicial.
+- `src/pages/Index.tsx` — trocar 4 URLs, atualizar link do popup Simulado, adicionar IntersectionObserver, recolorir ícone SVG do header.
+- `src/components/SalesPopup.tsx` — apenas se contiver URL hardcoded do Simulado.
+- `src/index.css` — redesign completo (fundo, partículas, header glass, cards glass, botões, tipografia, animações).
+
+### Fora de escopo
+Lógica de progresso, conteúdo dos módulos, navegação, popups (apenas link), tela de conclusão, link do App do Instrutor.
