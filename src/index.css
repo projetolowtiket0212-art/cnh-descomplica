@@ -164,6 +164,8 @@
 /* VIDEO PLAYER */
 .video-player-wrap{position:relative;width:calc(100% - 16px);margin:14px auto 0;aspect-ratio:16/9;border-radius:16px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,0.5),0 0 0 1px rgba(255,255,255,0.06);background:#000;}
 .video-iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+.video-mask-top{position:absolute;top:0;left:0;right:0;height:60px;background:#0a0a0f;pointer-events:none;z-index:2;}
+.video-mask-bottom{position:absolute;left:0;right:0;bottom:0;height:40px;background:#0a0a0f;pointer-events:none;z-index:2;}
 
 /* VIDEO INTRO TEXT */
 .video-intro-text{padding:14px 16px 4px;text-align:center;}
