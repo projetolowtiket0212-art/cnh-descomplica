@@ -20,7 +20,6 @@ const VideoPlayer = ({ videoId, onEnded }: Props) => {
     };
     window.addEventListener('message', handleMessage);
 
-    // Ask iframe to send state change events
     const timer = setInterval(() => {
       const w = iframeRef.current?.contentWindow;
       if (!w) return;
@@ -37,7 +36,8 @@ const VideoPlayer = ({ videoId, onEnded }: Props) => {
     };
   }, [onEnded]);
 
-  const src = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&enablejsapi=1&controls=1&playsinline=1`;
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+  const src = `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&enablejsapi=1&controls=1&playsinline=1&origin=${encodeURIComponent(origin)}`;
 
   return (
     <div className="video-player-wrap">
@@ -49,6 +49,8 @@ const VideoPlayer = ({ videoId, onEnded }: Props) => {
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
       />
+      <div className="video-mask-top" aria-hidden="true" />
+      <div className="video-mask-bottom" aria-hidden="true" />
     </div>
   );
 };
