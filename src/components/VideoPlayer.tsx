@@ -1,24 +1,68 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface Props {
-  src?: string;
+  videoId?: string;
   poster?: string;
   onEnded?: () => void;
 }
 
-const VideoPlayer = ({ src, poster, onEnded }: Props) => {
-  const [started, setStarted] = useState(false);
-  const [error, setError] = useState(false);
+const DEFAULT_VIDEO_ID = '4E1z9J3wpfQ';
 
-  const showFallback = !src || error;
+const VideoPlayer = ({ videoId = DEFAULT_VIDEO_ID, poster, onEnded }: Props) => {
+  const [started, setStarted] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    if (!started) return;
+    const handleMessage = (event: MessageEvent) => {
+      if (typeof event.data !== 'string') return;
+      try {
+        const data = JSON.parse(event.data);
+        if (data.event === 'onStateChange' && data.info === 0) onEnded?.();
+      } catch {}
+    };
+    window.addEventListener('message', handleMessage);
+    const timer = setInterval(() => {
+      const w = iframeRef.current?.contentWindow;
+      if (!w) return;
+      w.postMessage(JSON.stringify({ event: 'listening' }), '*');
+      w.postMessage(
+        JSON.stringify({ event: 'command', func: 'addEventListener', args: ['onStateChange'] }),
+        '*'
+      );
+    }, 1000);
+    return () => {
+      window.removeEventListener('message', handleMessage);
+      clearInterval(timer);
+    };
+  }, [started, onEnded]);
+
+  const params = [
+    'autoplay=1',
+    'mute=1',
+    'controls=1',
+    'modestbranding=1',
+    'rel=0',
+    'showinfo=0',
+    'playsinline=1',
+    'fs=0',
+    'iv_load_policy=3',
+    'enablejsapi=1',
+  ].join('&');
+  const src = `https://www.youtube-nocookie.com/embed/${videoId}?${params}`;
 
   return (
     <div className="video-player-wrap">
-      {showFallback ? (
-        <div className="video-fallback">
-          <span>Vídeo indisponível no momento</span>
-        </div>
-      ) : !started ? (
+      {started ? (
+        <iframe
+          ref={iframeRef}
+          className="video-iframe"
+          src={src}
+          title="Vídeo"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      ) : (
         <>
           {poster && (
             <img
@@ -42,20 +86,6 @@ const VideoPlayer = ({ src, poster, onEnded }: Props) => {
             </span>
           </button>
         </>
-      ) : (
-        <video
-          className="video-el"
-          src={src}
-          poster={poster}
-          controls
-          autoPlay
-          playsInline
-          preload="metadata"
-          controlsList="nodownload noremoteplayback"
-          disablePictureInPicture
-          onEnded={onEnded}
-          onError={() => setError(true)}
-        />
       )}
     </div>
   );
