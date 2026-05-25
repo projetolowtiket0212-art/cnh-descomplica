@@ -40,13 +40,14 @@ const VideoPlayer = ({ videoId = DEFAULT_VIDEO_ID, poster, onEnded }: Props) => 
   const params = [
     'autoplay=1',
     'mute=1',
-    'controls=1',
+    'controls=0',
     'modestbranding=1',
     'rel=0',
     'showinfo=0',
     'playsinline=1',
     'fs=0',
     'iv_load_policy=3',
+    'disablekb=1',
     'enablejsapi=1',
   ].join('&');
   const src = `https://www.youtube-nocookie.com/embed/${videoId}?${params}`;
