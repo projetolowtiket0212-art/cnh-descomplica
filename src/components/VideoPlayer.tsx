@@ -1,56 +1,62 @@
-import { useEffect, useRef } from 'react';
+import { useState } from 'react';
 
 interface Props {
-  videoId: string;
+  src?: string;
+  poster?: string;
   onEnded?: () => void;
 }
 
-const VideoPlayer = ({ videoId, onEnded }: Props) => {
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+const VideoPlayer = ({ src, poster, onEnded }: Props) => {
+  const [started, setStarted] = useState(false);
+  const [error, setError] = useState(false);
 
-  useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      if (typeof event.data !== 'string') return;
-      try {
-        const data = JSON.parse(event.data);
-        if (data.event === 'onStateChange' && data.info === 0) {
-          onEnded?.();
-        }
-      } catch {}
-    };
-    window.addEventListener('message', handleMessage);
-
-    const timer = setInterval(() => {
-      const w = iframeRef.current?.contentWindow;
-      if (!w) return;
-      w.postMessage(JSON.stringify({ event: 'listening' }), '*');
-      w.postMessage(
-        JSON.stringify({ event: 'command', func: 'addEventListener', args: ['onStateChange'] }),
-        '*'
-      );
-    }, 1000);
-
-    return () => {
-      window.removeEventListener('message', handleMessage);
-      clearInterval(timer);
-    };
-  }, [onEnded]);
-
-  const origin = typeof window !== 'undefined' ? window.location.origin : '';
-  const src = `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&enablejsapi=1&controls=1&playsinline=1&origin=${encodeURIComponent(origin)}`;
+  const showFallback = !src || error;
 
   return (
     <div className="video-player-wrap">
-      <iframe
-        ref={iframeRef}
-        className="video-iframe"
-        src={src}
-        title="Vídeo"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      />
-      <div className="video-mask-top" aria-hidden="true" />
-      <div className="video-mask-bottom" aria-hidden="true" />
+      {showFallback ? (
+        <div className="video-fallback">
+          <span>Vídeo indisponível no momento</span>
+        </div>
+      ) : !started ? (
+        <>
+          {poster && (
+            <img
+              src={poster}
+              alt="Capa do vídeo"
+              className="video-poster"
+              width={1920}
+              height={1080}
+            />
+          )}
+          <button
+            type="button"
+            className="video-play-overlay"
+            onClick={() => setStarted(true)}
+            aria-label="Reproduzir vídeo"
+          >
+            <span className="video-play-btn">
+              <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
+                <path d="M8 5.5v13l11-6.5-11-6.5z" fill="#fff" />
+              </svg>
+            </span>
+          </button>
+        </>
+      ) : (
+        <video
+          className="video-el"
+          src={src}
+          poster={poster}
+          controls
+          autoPlay
+          playsInline
+          preload="metadata"
+          controlsList="nodownload noremoteplayback"
+          disablePictureInPicture
+          onEnded={onEnded}
+          onError={() => setError(true)}
+        />
+      )}
     </div>
   );
 };
