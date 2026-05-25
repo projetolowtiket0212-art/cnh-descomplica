@@ -201,7 +201,7 @@ const Index = () => {
             </div>
 
             {/* VIDEO + INTRO TEXT */}
-            <VideoPlayer poster={videoCover} onEnded={handleVideoEnded} />
+            <VideoPlayer videoId="4E1z9J3wpfQ" poster={videoCover} onEnded={handleVideoEnded} />
             <div className="video-intro-text">
               <div className="video-intro-title">📖 Prefere ler? O guia completo está aqui embaixo</div>
               <div className="video-intro-sub">Este produto foi 100% pensado em você. Além do vídeo, todos os módulos estão disponíveis em formato de leitura detalhada logo abaixo — no seu ritmo, quando quiser.</div>
