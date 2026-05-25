@@ -2,6 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { modules } from '@/data/modules';
 import { useProgress } from '@/hooks/useProgress';
 import VideoPlayer from '@/components/VideoPlayer';
+import videoCover from '@/assets/video-cover.jpg';
 import SalesPopup from '@/components/SalesPopup';
 
 const moduleMeta = modules.map(m => ({ id: m.id, stepCount: m.steps.length }));
@@ -200,7 +201,7 @@ const Index = () => {
             </div>
 
             {/* VIDEO + INTRO TEXT */}
-            <VideoPlayer videoId="4E1z9J3wpfQ" onEnded={handleVideoEnded} />
+            <VideoPlayer poster={videoCover} onEnded={handleVideoEnded} />
             <div className="video-intro-text">
               <div className="video-intro-title">📖 Prefere ler? O guia completo está aqui embaixo</div>
               <div className="video-intro-sub">Este produto foi 100% pensado em você. Além do vídeo, todos os módulos estão disponíveis em formato de leitura detalhada logo abaixo — no seu ritmo, quando quiser.</div>
