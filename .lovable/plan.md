@@ -1,24 +1,19 @@
-## Player de vídeo — fachada com clique
+## Barra de progresso falsa verde sobre o iframe
 
-Substituir o `VideoPlayer.tsx` atual pela técnica da fachada, mantendo a integração no `Index.tsx`.
+Adicionar, dentro do container do player (apenas depois do clique, junto com o iframe), uma camada absoluta no rodapé com gradiente preto→transparente e uma barra verde com bolinha, cobrindo visualmente a barra vermelha do YouTube. `pointer-events: none` para não bloquear cliques.
 
 ### Mudanças
 
 **`src/components/VideoPlayer.tsx`**
-- Remover poster customizado via prop, overlay com botão SVG customizado, lógica de `postMessage`/`addEventListener` do YouTube e `useEffect` de listener.
-- Renderizar um único `<div>` container clicável (`aspect-ratio: 16/10`, `border-radius: 16px`, `overflow: hidden`, `background:#000`).
-- Estado inicial: `<img>` da thumbnail oficial `https://img.youtube.com/vi/{videoId}/maxresdefault.jpg` em `object-fit: cover` + botão play verde central (72px, `#16a34a`, glow verde, SVG triângulo branco). Sem texto, sem outros overlays.
-- Ao clicar: trocar conteúdo por `<iframe>` com:
-  - `src=https://www.youtube-nocookie.com/embed/{videoId}?autoplay=1&mute=0&rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&controls=1&playsinline=1`
-  - estilo absoluto centralizado, `width:100%`, `height: calc(100% + 120px)`, `border:none`
-  - `allow="autoplay; fullscreen"`, `allowFullScreen`
-- Manter `onEnded` opcional via listener mínimo de `postMessage` somente após o iframe montar (sem overlays adicionais), para não quebrar o comportamento de popup atual em `Index.tsx`.
-
-**`src/index.css`**
-- Limpar classes não usadas relacionadas ao player antigo (`.video-poster`, `.video-play-overlay`, `.video-play-btn`, `.video-iframe`, `.video-player-wrap`) — ou simplificar para apenas o necessário, já que o novo componente usa estilos inline conforme a especificação.
-
-**`src/pages/Index.tsx`**
-- Sem mudanças além de garantir que `<VideoPlayer videoId="4E1z9J3wpfQ" onEnded={handleVideoEnded} />` continue funcionando (remover prop `poster`, que não é mais usada).
+- No bloco `started` (já existente), envolver o `<iframe>` num fragmento e adicionar logo após ele a div da barra falsa:
+  - container: `position:absolute; bottom:0; left:0; width:100%; height:48px; pointer-events:none; z-index:10; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);`
+  - trilho: `position:absolute; bottom:10px; left:12px; right:12px; height:4px; background: rgba(255,255,255,0.3); border-radius:999px;`
+  - preenchimento verde: `height:100%; background:#16a34a; border-radius:999px; position:relative;` com largura controlada por estado `progress` (0–100%).
+  - bolinha verde: `position:absolute; right:-6px; top:50%; transform:translateY(-50%); width:12px; height:12px; background:#16a34a; border-radius:50%; box-shadow:0 0 6px rgba(22,163,74,0.8);`
+- Sincronizar a largura com o progresso real do vídeo usando a YouTube IFrame API já habilitada (`enablejsapi=1`):
+  - reaproveitar o `useEffect` que faz `postMessage`; além de `addEventListener onStateChange`, enviar `{event:'command', func:'getCurrentTime'}` e `{event:'command', func:'getDuration'}` em intervalo (~500 ms).
+  - no `handleMessage`, ler `data.info` quando `data.event === 'infoDelivery'` (campos `currentTime` e `duration`) e atualizar `progress = currentTime / duration * 100`.
+  - manter `onEnded` ao receber `onStateChange` info=0.
 
 ### Fora de escopo
-Qualquer outro elemento da página (módulos, popup, progresso, upsells, layout geral).
+Qualquer outro elemento da página, estilos globais ou comportamento do estado inicial (thumbnail + botão play).

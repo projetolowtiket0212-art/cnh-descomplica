@@ -9,27 +9,37 @@ const DEFAULT_VIDEO_ID = '4E1z9J3wpfQ';
 
 const VideoPlayer = ({ videoId = DEFAULT_VIDEO_ID, onEnded }: Props) => {
   const [started, setStarted] = useState(false);
+  const [progress, setProgress] = useState(0);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const durationRef = useRef(0);
 
   useEffect(() => {
-    if (!started || !onEnded) return;
+    if (!started) return;
     const handleMessage = (event: MessageEvent) => {
       if (typeof event.data !== 'string') return;
       try {
         const data = JSON.parse(event.data);
-        if (data.event === 'onStateChange' && data.info === 0) onEnded();
+        if (data.event === 'onStateChange' && data.info === 0) onEnded?.();
+        if (data.event === 'infoDelivery' && data.info) {
+          if (typeof data.info.duration === 'number' && data.info.duration > 0) {
+            durationRef.current = data.info.duration;
+          }
+          if (typeof data.info.currentTime === 'number' && durationRef.current > 0) {
+            const pct = Math.min(100, (data.info.currentTime / durationRef.current) * 100);
+            setProgress(pct);
+          }
+        }
       } catch {}
     };
     window.addEventListener('message', handleMessage);
+    const send = (msg: object) =>
+      iframeRef.current?.contentWindow?.postMessage(JSON.stringify(msg), '*');
     const timer = setInterval(() => {
-      const w = iframeRef.current?.contentWindow;
-      if (!w) return;
-      w.postMessage(JSON.stringify({ event: 'listening' }), '*');
-      w.postMessage(
-        JSON.stringify({ event: 'command', func: 'addEventListener', args: ['onStateChange'] }),
-        '*'
-      );
-    }, 1000);
+      send({ event: 'listening' });
+      send({ event: 'command', func: 'addEventListener', args: ['onStateChange'] });
+      send({ event: 'command', func: 'getDuration' });
+      send({ event: 'command', func: 'getCurrentTime' });
+    }, 500);
     return () => {
       window.removeEventListener('message', handleMessage);
       clearInterval(timer);
@@ -52,22 +62,73 @@ const VideoPlayer = ({ videoId = DEFAULT_VIDEO_ID, onEnded }: Props) => {
       }}
     >
       {started ? (
-        <iframe
-          ref={iframeRef}
-          src={iframeSrc}
-          title="Vídeo"
-          allow="autoplay; fullscreen"
-          allowFullScreen
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '100%',
-            height: 'calc(100% + 120px)',
-            border: 'none',
-          }}
-        />
+        <>
+          <iframe
+            ref={iframeRef}
+            src={iframeSrc}
+            title="Vídeo"
+            allow="autoplay; fullscreen"
+            allowFullScreen
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '100%',
+              height: 'calc(100% + 120px)',
+              border: 'none',
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              bottom: 0,
+              left: 0,
+              width: '100%',
+              height: 48,
+              pointerEvents: 'none',
+              zIndex: 10,
+              background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)',
+            }}
+          >
+            <div
+              style={{
+                position: 'absolute',
+                bottom: 10,
+                left: 12,
+                right: 12,
+                height: 4,
+                background: 'rgba(255,255,255,0.3)',
+                borderRadius: 999,
+              }}
+            >
+              <div
+                style={{
+                  width: `${progress}%`,
+                  height: '100%',
+                  background: '#16a34a',
+                  borderRadius: 999,
+                  position: 'relative',
+                  transition: 'width 0.3s linear',
+                }}
+              >
+                <div
+                  style={{
+                    position: 'absolute',
+                    right: -6,
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    width: 12,
+                    height: 12,
+                    background: '#16a34a',
+                    borderRadius: '50%',
+                    boxShadow: '0 0 6px rgba(22,163,74,0.8)',
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </>
       ) : (
         <>
           <img
