@@ -2,23 +2,22 @@ import { useEffect, useRef, useState } from 'react';
 
 interface Props {
   videoId?: string;
-  poster?: string;
   onEnded?: () => void;
 }
 
 const DEFAULT_VIDEO_ID = '4E1z9J3wpfQ';
 
-const VideoPlayer = ({ videoId = DEFAULT_VIDEO_ID, poster, onEnded }: Props) => {
+const VideoPlayer = ({ videoId = DEFAULT_VIDEO_ID, onEnded }: Props) => {
   const [started, setStarted] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
-    if (!started) return;
+    if (!started || !onEnded) return;
     const handleMessage = (event: MessageEvent) => {
       if (typeof event.data !== 'string') return;
       try {
         const data = JSON.parse(event.data);
-        if (data.event === 'onStateChange' && data.info === 0) onEnded?.();
+        if (data.event === 'onStateChange' && data.info === 0) onEnded();
       } catch {}
     };
     window.addEventListener('message', handleMessage);
@@ -37,55 +36,71 @@ const VideoPlayer = ({ videoId = DEFAULT_VIDEO_ID, poster, onEnded }: Props) => 
     };
   }, [started, onEnded]);
 
-  const params = [
-    'autoplay=1',
-    'mute=1',
-    'controls=0',
-    'modestbranding=1',
-    'rel=0',
-    'showinfo=0',
-    'playsinline=1',
-    'fs=0',
-    'iv_load_policy=3',
-    'disablekb=1',
-    'enablejsapi=1',
-  ].join('&');
-  const src = `https://www.youtube-nocookie.com/embed/${videoId}?${params}`;
+  const iframeSrc = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&mute=0&rel=0&modestbranding=1&showinfo=0&iv_load_policy=3&controls=1&playsinline=1&enablejsapi=1`;
 
   return (
-    <div className="video-player-wrap">
+    <div
+      onClick={() => !started && setStarted(true)}
+      style={{
+        position: 'relative',
+        width: '100%',
+        aspectRatio: '16 / 10',
+        borderRadius: 16,
+        overflow: 'hidden',
+        cursor: started ? 'default' : 'pointer',
+        background: '#000',
+      }}
+    >
       {started ? (
         <iframe
           ref={iframeRef}
-          className="video-iframe"
-          src={src}
+          src={iframeSrc}
           title="Vídeo"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allow="autoplay; fullscreen"
           allowFullScreen
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '100%',
+            height: 'calc(100% + 120px)',
+            border: 'none',
+          }}
         />
       ) : (
         <>
-          {poster && (
-            <img
-              src={poster}
-              alt="Capa do vídeo"
-              className="video-poster"
-              width={1920}
-              height={1080}
-            />
-          )}
-          <button
-            type="button"
-            className="video-play-overlay"
-            onClick={() => setStarted(true)}
-            aria-label="Reproduzir vídeo"
+          <img
+            src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
+            alt=""
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
           >
-            <span className="video-play-btn">
-              <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">
-                <path d="M8 5.5v13l11-6.5-11-6.5z" fill="#fff" />
+            <div
+              style={{
+                width: 72,
+                height: 72,
+                background: '#16a34a',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 0 32px rgba(22,163,74,0.7)',
+              }}
+            >
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="white" aria-hidden="true">
+                <polygon points="5,3 19,12 5,21" />
               </svg>
-            </span>
-          </button>
+            </div>
+          </div>
         </>
       )}
     </div>
