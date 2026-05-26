@@ -75,7 +75,7 @@ const VideoPlayer = ({ videoId = DEFAULT_VIDEO_ID, onEnded }: Props) => {
               left: '50%',
               transform: 'translate(-50%, -50%)',
               width: '100%',
-              height: 'calc(100% + 120px)',
+              height: 'calc(100% + 160px)',
               border: 'none',
             }}
           />
@@ -87,7 +87,7 @@ const VideoPlayer = ({ videoId = DEFAULT_VIDEO_ID, onEnded }: Props) => {
               width: '100%',
               height: 48,
               pointerEvents: 'none',
-              zIndex: 10,
+              zIndex: 999,
               background: 'linear-gradient(to top, rgba(0,0,0,0.7), transparent)',
             }}
           >
